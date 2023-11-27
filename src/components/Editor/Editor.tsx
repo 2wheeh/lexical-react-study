@@ -21,12 +21,23 @@ export function LexicalEditor({ config }: LexicalEditorProps) {
 
 export function Editor() {
   return (
-    <div id='editor-wrapper' className='relative'>
+    <div
+      id='editor-wrapper'
+      className='relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2'
+    >
       <LexicalEditor
         config={{
           namespace: 'lexical-editor',
           theme: {
-            root: 'p-4',
+            root: 'p-4 border-slate-500 border-2 rounded h-full min-h-[200px] focus:outline-none focus-visible:border-black',
+            link: 'cursor-pointer',
+            text: {
+              bold: 'font-semibold',
+              underline: 'underline',
+              italic: 'italic',
+              strikethrough: 'line-through',
+              underlineStrikethrough: 'underlined-line-through',
+            },
           },
           onError: error => {
             console.log(error);
