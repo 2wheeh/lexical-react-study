@@ -12,7 +12,11 @@ export function LexicalEditor({ config }: LexicalEditorProps) {
     <LexicalComposer initialConfig={config}>
       <RichTextPlugin
         contentEditable={<ContentEditable />}
-        placeholder={<div className='absolute top-[1.125rem] left-[1.125rem] opacity-50'>Start writing ...</div>}
+        placeholder={
+          <div className='absolute top-[1.125rem] left-[1.125rem] opacity-50 pointer-events-none'>
+            Start writing ...
+          </div>
+        }
         ErrorBoundary={LexicalErrorBoundary}
       />
     </LexicalComposer>
