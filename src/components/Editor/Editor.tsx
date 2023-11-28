@@ -7,9 +7,8 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LocalStoragePlugin } from './plugins/LocalStorage';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import { TRANSFORMERS, CODE, INLINE_CODE } from '@lexical/markdown';
 import AutoLinkPlugin from './plugins/AutoLink';
+import MarkdownShortcutPlugin from './plugins/MarkdownShortcut';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
@@ -28,7 +27,7 @@ function LexicalEditor({ config }: LexicalEditorProps) {
         ErrorBoundary={LexicalErrorBoundary}
       />
       <LocalStoragePlugin namespace={config.namespace} />
-      <MarkdownShortcutPlugin transformers={TRANSFORMERS.filter(t => t !== CODE && t !== INLINE_CODE)} />
+      <MarkdownShortcutPlugin />
       <LinkPlugin />
       <ListPlugin />
       <AutoLinkPlugin />
