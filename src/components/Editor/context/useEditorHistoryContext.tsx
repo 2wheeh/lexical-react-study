@@ -2,11 +2,11 @@ import type { HistoryState } from '@lexical/react/LexicalHistoryPlugin';
 import { createEmptyHistoryState } from '@lexical/react/LexicalHistoryPlugin';
 import { ReactNode, createContext, useContext, useMemo } from 'react';
 
-type EditorHistoryContext = {
+type ContextShape = {
   historyState?: HistoryState;
 };
 
-const Context = createContext<EditorHistoryContext>({});
+const Context = createContext<ContextShape>({});
 
 export function EditorHistoryContext({ children }: { children: ReactNode }): JSX.Element {
   const historyContext = useMemo(
@@ -20,6 +20,6 @@ export function EditorHistoryContext({ children }: { children: ReactNode }): JSX
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useEditorHistoryContext(): EditorHistoryContext {
+export function useEditorHistoryContext(): ContextShape {
   return useContext(Context);
 }
