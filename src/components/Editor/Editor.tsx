@@ -1,8 +1,14 @@
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import TooltipNodes from './nodes/TooltipNodes';
+
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LocalStoragePlugin } from './plugins/LocalStorage';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { TRANSFORMERS, CODE } from '@lexical/markdown';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
@@ -21,10 +27,14 @@ function LexicalEditor({ config }: LexicalEditorProps) {
         ErrorBoundary={LexicalErrorBoundary}
       />
       <LocalStoragePlugin namespace={config.namespace} />
+      <MarkdownShortcutPlugin transformers={TRANSFORMERS.filter(t => t !== CODE)} />
+      <LinkPlugin />
+      <ListPlugin />
     </LexicalComposer>
   );
 }
 
+const EDITORS_NODES = [...TooltipNodes];
 const EDITOR_NAMESPACE = 'lexical-editor';
 
 export function Editor() {
@@ -39,6 +49,7 @@ export function Editor() {
         config={{
           namespace: EDITOR_NAMESPACE,
           editorState: content,
+          nodes: EDITORS_NODES,
           theme: {
             root: 'p-4 border-slate-500 border-2 rounded h-full min-h-[200px] focus:outline-none focus-visible:border-black',
             link: 'cursor-pointer',
@@ -48,6 +59,10 @@ export function Editor() {
               italic: 'italic',
               strikethrough: 'line-through',
               underlineStrikethrough: 'underlined-line-through',
+            },
+            list: {
+              listitem: '',
+              // TODO: nested, ol, ul, ...
             },
           },
           onError: error => {
