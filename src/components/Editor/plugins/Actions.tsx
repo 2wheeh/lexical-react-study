@@ -2,7 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND, LexicalEditor } from 'lexical';
 import { useEffect, useState } from 'react';
 
-function useEditorEmpty(editor: LexicalEditor) {
+function useClear(editor: LexicalEditor): [boolean, { clear: () => void }] {
   const [isEditorEmpty, setIsEditorEmpty] = useState<boolean>(true);
 
   useEffect(
@@ -28,17 +28,19 @@ function useEditorEmpty(editor: LexicalEditor) {
     [editor]
   );
 
-  return isEditorEmpty;
+  const handler = {
+    clear: () => {
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      // editor.focus();
+    },
+  };
+
+  return [isEditorEmpty, handler];
 }
 
 export function ActionsPlugin() {
   const [editor] = useLexicalComposerContext();
-  const isEditorEmpty = useEditorEmpty(editor);
-
-  const handleClick = () => {
-    editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-    // editor.focus();
-  };
+  const [isEditorEmpty, { clear }] = useClear(editor);
 
   return (
     <>
@@ -46,7 +48,7 @@ export function ActionsPlugin() {
       <button
         className='my-2 p-2 rounded bg-slate-200 opacity-70 disabled:bg-slate-400'
         disabled={isEditorEmpty}
-        onClick={handleClick}
+        onClick={clear}
       >
         <p>clear</p>
       </button>
