@@ -1,7 +1,7 @@
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HistoryPlugin as LexicalHistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { useEditorHistoryContext } from '../context/useEditorHistoryContext';
 
-export default function LexicalHistoryPlugin() {
+export function HistoryPlugin() {
   const { historyState } = useEditorHistoryContext();
-  return <HistoryPlugin externalHistoryState={historyState} />;
+  return <LexicalHistoryPlugin externalHistoryState={historyState} />;
 }

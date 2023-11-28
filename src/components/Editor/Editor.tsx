@@ -7,12 +7,12 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LocalStoragePlugin } from './plugins/LocalStorage';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
-import AutoLinkPlugin from './plugins/AutoLink';
-import MarkdownShortcutPlugin from './plugins/MarkdownShortcut';
+import { AutoLinkPlugin } from './plugins/AutoLink';
+import { MarkdownShortcutPlugin } from './plugins/MarkdownShortcut';
 import { ActionsPlugin } from './plugins/Actions';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { EditorHistoryContext } from './context/useEditorHistoryContext';
-import HistoryPlugin from './plugins/History';
+import { HistoryPlugin } from './plugins/History';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
