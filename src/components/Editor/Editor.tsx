@@ -9,6 +9,8 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import AutoLinkPlugin from './plugins/AutoLink';
 import MarkdownShortcutPlugin from './plugins/MarkdownShortcut';
+import { ActionsPlugin } from './plugins/Actions';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
@@ -31,6 +33,8 @@ function LexicalEditor({ config }: LexicalEditorProps) {
       <LinkPlugin />
       <ListPlugin />
       <AutoLinkPlugin />
+      <ClearEditorPlugin />
+      <ActionsPlugin />
     </LexicalComposer>
   );
 }
