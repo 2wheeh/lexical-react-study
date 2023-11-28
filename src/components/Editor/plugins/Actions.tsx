@@ -75,7 +75,7 @@ export function ActionsPlugin() {
 
   return (
     <div className='space-x-1'>
-      {/* // TODO: replace <button /> with wrapped component <Button /> */}
+      {/* // TODO: replace <button /> with wrapped component <Button />  */}
       <button
         className='my-2 p-2 rounded bg-slate-200 opacity-70 disabled:opacity-30'
         disabled={isEditorEmpty}
