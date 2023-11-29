@@ -1,7 +1,7 @@
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import TooltipNodes from './nodes/TooltipNodes';
+import EditorNodes from './nodes/EditorNodes';
 
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LocalStoragePlugin, retrieveContent } from './plugins/LocalStorage';
@@ -42,7 +42,7 @@ function LexicalEditor({ config }: LexicalEditorProps) {
   );
 }
 
-const EDITORS_NODES = [...TooltipNodes];
+const EDITORS_NODES = [...EditorNodes];
 const EDITOR_NAMESPACE = 'lexical-editor';
 
 export function Editor() {

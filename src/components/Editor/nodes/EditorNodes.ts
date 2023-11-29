@@ -4,7 +4,7 @@ import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { ListNode, ListItemNode } from '@lexical/list';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 
-const TooltipNodes: Array<Klass<LexicalNode>> = [
+const EditorNodes: Array<Klass<LexicalNode>> = [
   HeadingNode,
   QuoteNode,
   ListNode,
@@ -14,4 +14,4 @@ const TooltipNodes: Array<Klass<LexicalNode>> = [
   // HorizontalRuleNode,
 ];
 
-export default TooltipNodes;
+export default EditorNodes;
