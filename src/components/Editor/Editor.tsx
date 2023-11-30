@@ -13,6 +13,7 @@ import { ActionsPlugin } from './plugins/Actions';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { EditorHistoryContext } from './context/useEditorHistoryContext';
 import { HistoryPlugin } from './plugins/History';
+import { ToolbarPlugin } from './plugins/Toolbar';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
@@ -38,6 +39,7 @@ function LexicalEditor({ config }: LexicalEditorProps) {
       <AutoLinkPlugin />
       <ClearEditorPlugin />
       <ActionsPlugin />
+      <ToolbarPlugin />
     </LexicalComposer>
   );
 }
@@ -62,9 +64,9 @@ export function Editor() {
               link: 'cursor-pointer',
               text: {
                 bold: 'font-semibold',
-                underline: 'underline',
                 italic: 'italic',
                 strikethrough: 'line-through',
+                underline: 'underline',
                 underlineStrikethrough: 'underlined-line-through',
               },
               list: {
