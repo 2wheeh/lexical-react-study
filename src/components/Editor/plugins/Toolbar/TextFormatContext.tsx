@@ -20,7 +20,7 @@ interface ContextShape {
   handlers?: TextFormatHandlers;
 }
 
-const textFormatContext = createContext<ContextShape>({});
+const Context = createContext<ContextShape>({});
 
 export function TextFormatContext({ children, editor }: { children: ReactNode; editor: LexicalEditor }) {
   const [isBold, setIsBold] = useState<boolean>(false);
@@ -69,10 +69,10 @@ export function TextFormatContext({ children, editor }: { children: ReactNode; e
     },
   };
 
-  return <textFormatContext.Provider value={{ states, handlers }}>{children}</textFormatContext.Provider>;
+  return <Context.Provider value={{ states, handlers }}>{children}</Context.Provider>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useTextFormat() {
-  return useContext(textFormatContext);
+  return useContext(Context);
 }
