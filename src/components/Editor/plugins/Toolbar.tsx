@@ -1,57 +1,30 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FORMAT_TEXT_COMMAND, LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
-import { useEffect, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-interface ToolbarProps {
-  editor: LexicalEditor;
+interface TextFormatStates {
   isBold: boolean;
   isItalic: boolean;
   isStrikethrough: boolean;
   isUnderline: boolean;
-  // isLink: boolean;
 }
 
-function Toolbar({ editor, isBold, isItalic, isStrikethrough, isUnderline /* isLink */ }: ToolbarProps) {
-  return (
-    <div className='bg-slate-200 absolute top-1 left-1 space-x-1 rounded-sm p-1'>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 font-bold ' + (isBold ? 'bg-slate-300' : '')}
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-        }}
-      >
-        B
-      </button>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 italic ' + (isItalic ? ' bg-slate-300' : '')}
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-        }}
-      >
-        I
-      </button>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 line-through ' + (isStrikethrough ? 'bg-slate-300' : '')}
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-        }}
-      >
-        S
-      </button>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 underline ' + (isUnderline ? 'bg-slate-300' : '')}
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-        }}
-      >
-        U
-      </button>
-    </div>
-  );
+interface TextFormatHandlers {
+  bold: () => void;
+  italic: () => void;
+  strikethrough: () => void;
+  underline: () => void;
 }
 
-function useToolbar(editor: LexicalEditor, anchorElem: HTMLElement) {
+interface ContextShape {
+  states?: TextFormatStates;
+  handlers?: TextFormatHandlers;
+}
+
+const textFormatContext = createContext<ContextShape>({});
+
+function TextFormatContext({ children, editor }: { children: ReactNode; editor: LexicalEditor }) {
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
@@ -76,19 +49,72 @@ function useToolbar(editor: LexicalEditor, anchorElem: HTMLElement) {
     });
   }, [editor]);
 
-  return createPortal(
-    <Toolbar
-      editor={editor}
-      isBold={isBold}
-      isItalic={isItalic}
-      isStrikethrough={isStrikethrough}
-      isUnderline={isUnderline}
-    />,
-    anchorElem
+  const states: TextFormatStates = {
+    isBold,
+    isItalic,
+    isStrikethrough,
+    isUnderline,
+  };
+
+  const handlers: TextFormatHandlers = {
+    bold: () => {
+      editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
+    },
+    italic: () => {
+      editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+    },
+    strikethrough: () => {
+      editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+    },
+    underline: () => {
+      editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
+    },
+  };
+
+  return <textFormatContext.Provider value={{ states, handlers }}>{children}</textFormatContext.Provider>;
+}
+
+function useTextFormat() {
+  return useContext(textFormatContext);
+}
+
+function Toolbar() {
+  const { states, handlers } = useTextFormat();
+
+  return (
+    <div className='bg-slate-200 absolute top-1 left-1 space-x-1 rounded-sm p-1'>
+      <button
+        className={'px-1 hover:bg-gray-300 rounded-sm w-6 font-bold ' + (states?.isBold ? 'bg-slate-300' : '')}
+        onClick={handlers?.bold}
+      >
+        B
+      </button>
+      <button
+        className={'px-1 hover:bg-gray-300 rounded-sm w-6 italic ' + (states?.isItalic ? ' bg-slate-300' : '')}
+        onClick={handlers?.italic}
+      >
+        I
+      </button>
+      <button
+        className={
+          'px-1 hover:bg-gray-300 rounded-sm w-6 line-through ' + (states?.isStrikethrough ? 'bg-slate-300' : '')
+        }
+        onClick={handlers?.strikethrough}
+      >
+        S
+      </button>
+      <button
+        className={'px-1 hover:bg-gray-300 rounded-sm w-6 underline ' + (states?.isUnderline ? 'bg-slate-300' : '')}
+        onClick={handlers?.underline}
+      >
+        U
+      </button>
+    </div>
   );
 }
 
 export function ToolbarPlugin({ anchorElem = document.body }: { anchorElem?: HTMLElement }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
-  return useToolbar(editor, anchorElem);
+
+  return <TextFormatContext editor={editor}>{createPortal(<Toolbar />, anchorElem)}</TextFormatContext>;
 }
