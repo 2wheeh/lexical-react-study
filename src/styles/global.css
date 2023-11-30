@@ -1,11 +1,20 @@
-@font-face {
-  font-family: 'Literata';
-  font-weight: 100 900;
-  font-display: fallback;
-  font-style: normal;
-  src: url(/Literata-VariableFont.ttf) format('ttf');
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* !! @font-face is not working here, but works in config file with plugin
+@layer base {
+  @font-face { 
+    font-family: 'Literata';
+    font-weight: 100 900;
+    font-display: fallback;
+    font-style: normal;
+    src: url(/fonts/Literata-VariableFont.ttf) format('ttf');
+  }
+}
+
+@layer components {
+  .underlined-line-through {
+    text-decoration: underline line-through;
+  }
+} */
