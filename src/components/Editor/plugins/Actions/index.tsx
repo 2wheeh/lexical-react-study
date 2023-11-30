@@ -1,7 +1,7 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND, LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
 import { useEffect, useState } from 'react';
-import { useEditorHistoryContext } from '../context/useEditorHistoryContext';
+import { useEditorHistoryContext } from '../../context/useEditorHistoryContext';
 
 function useClear(editor: LexicalEditor): [boolean, { clear: () => void }] {
   const [isEditorEmpty, setIsEditorEmpty] = useState<boolean>(true);
