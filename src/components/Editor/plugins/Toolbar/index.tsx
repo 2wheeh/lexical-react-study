@@ -1,9 +1,10 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { createPortal } from 'react-dom';
-import { TextFormatContext, useTextFormat } from './TextFormatContext';
+import { useTextFormat } from './useTextFormat';
+import { LexicalEditor } from 'lexical';
 
-function Toolbar() {
-  const { states, handlers } = useTextFormat();
+function Toolbar({ editor }: { editor: LexicalEditor }) {
+  const [states, handlers] = useTextFormat({ editor });
 
   return (
     <div className='bg-slate-200 absolute top-1 left-1 space-x-1 rounded-sm p-1'>
@@ -40,5 +41,5 @@ function Toolbar() {
 export function ToolbarPlugin({ anchorElem = document.body }: { anchorElem?: HTMLElement }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
-  return <TextFormatContext editor={editor}>{createPortal(<Toolbar />, anchorElem)}</TextFormatContext>;
+  return createPortal(<Toolbar editor={editor} />, anchorElem);
 }

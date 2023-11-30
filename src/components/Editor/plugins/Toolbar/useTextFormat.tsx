@@ -1,5 +1,5 @@
 import { FORMAT_TEXT_COMMAND, LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TextFormatStates {
   isBold: boolean;
@@ -15,14 +15,7 @@ interface TextFormatHandlers {
   underline: () => void;
 }
 
-interface ContextShape {
-  states?: TextFormatStates;
-  handlers?: TextFormatHandlers;
-}
-
-const Context = createContext<ContextShape>({});
-
-export function TextFormatContext({ children, editor }: { children: ReactNode; editor: LexicalEditor }) {
+export function useTextFormat({ editor }: { editor: LexicalEditor }): [TextFormatStates, TextFormatHandlers] {
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
@@ -69,10 +62,5 @@ export function TextFormatContext({ children, editor }: { children: ReactNode; e
     },
   };
 
-  return <Context.Provider value={{ states, handlers }}>{children}</Context.Provider>;
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useTextFormat() {
-  return useContext(Context);
+  return [states, handlers];
 }
