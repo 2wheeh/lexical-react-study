@@ -29,7 +29,7 @@ function TextFormatContext({ children, editor }: { children: ReactNode; editor: 
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
   const [isUnderline, setIsUnderline] = useState<boolean>(false);
-  // const [isLink, setIsLink] = useState<boolean>(false);
+  // const [isLink, setIsLink] = useState<boolean>(false); //TODO: add Link button on toolbar
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
