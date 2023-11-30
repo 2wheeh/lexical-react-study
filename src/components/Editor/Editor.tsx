@@ -51,7 +51,7 @@ export function Editor() {
   return (
     <div
       id='editor-wrapper'
-      className='relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2'
+      className='relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2 prose-headings:font-normal'
     >
       <EditorHistoryContext>
         <LexicalEditor
