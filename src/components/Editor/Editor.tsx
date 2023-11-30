@@ -1,7 +1,7 @@
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import TooltipNodes from './nodes/TooltipNodes';
+import EditorNodes from './nodes/EditorNodes';
 
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LocalStoragePlugin, retrieveContent } from './plugins/LocalStorage';
@@ -13,6 +13,7 @@ import { ActionsPlugin } from './plugins/Actions';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { EditorHistoryContext } from './context/useEditorHistoryContext';
 import { HistoryPlugin } from './plugins/History';
+import { ToolbarPlugin } from './plugins/Toolbar';
 
 interface LexicalEditorProps {
   config: InitialConfigType;
@@ -38,18 +39,19 @@ function LexicalEditor({ config }: LexicalEditorProps) {
       <AutoLinkPlugin />
       <ClearEditorPlugin />
       <ActionsPlugin />
+      <ToolbarPlugin />
     </LexicalComposer>
   );
 }
 
-const EDITORS_NODES = [...TooltipNodes];
+const EDITORS_NODES = [...EditorNodes];
 const EDITOR_NAMESPACE = 'lexical-editor';
 
 export function Editor() {
   return (
     <div
       id='editor-wrapper'
-      className='relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2'
+      className='relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2 prose-headings:font-normal'
     >
       <EditorHistoryContext>
         <LexicalEditor
@@ -62,9 +64,9 @@ export function Editor() {
               link: 'cursor-pointer',
               text: {
                 bold: 'font-semibold',
-                underline: 'underline',
                 italic: 'italic',
                 strikethrough: 'line-through',
+                underline: 'underline',
                 underlineStrikethrough: 'underlined-line-through',
               },
               list: {
