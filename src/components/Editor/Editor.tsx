@@ -14,16 +14,34 @@ import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { EditorHistoryContext } from './context/useEditorHistoryContext';
 import { HistoryPlugin } from './plugins/History';
 import { ToolbarPlugin } from './plugins/Toolbar';
+import { useState } from 'react';
+
+const useAnchor = (): [HTMLDivElement | null, (divElem: HTMLDivElement) => void] => {
+  const [anchorElem, setAnchorElem] = useState<HTMLDivElement | null>(null);
+  const onAnchorRef = (_anchorElem: HTMLDivElement) => {
+    if (_anchorElem !== null) {
+      setAnchorElem(_anchorElem);
+    }
+  };
+
+  return [anchorElem, onAnchorRef];
+};
 
 interface LexicalEditorProps {
   config: InitialConfigType;
 }
 
 function LexicalEditor({ config }: LexicalEditorProps) {
+  const [anchorElem, onAnchorRef] = useAnchor();
+
   return (
     <LexicalComposer initialConfig={config}>
       <RichTextPlugin
-        contentEditable={<ContentEditable />}
+        contentEditable={
+          <div ref={onAnchorRef}>
+            <ContentEditable />
+          </div>
+        }
         placeholder={
           <div className='absolute top-[1.125rem] left-[1.125rem] opacity-50 pointer-events-none'>
             Start writing ...
@@ -39,7 +57,7 @@ function LexicalEditor({ config }: LexicalEditorProps) {
       <AutoLinkPlugin />
       <ClearEditorPlugin />
       <ActionsPlugin />
-      <ToolbarPlugin />
+      <>{anchorElem && <ToolbarPlugin anchorElem={anchorElem} />}</>
     </LexicalComposer>
   );
 }
