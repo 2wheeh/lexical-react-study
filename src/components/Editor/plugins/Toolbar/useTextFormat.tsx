@@ -1,5 +1,6 @@
 import { FORMAT_TEXT_COMMAND, LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { usePointer } from '../../../../hooks/usePointer';
 
 interface TextFormatStates {
   isBold: boolean;
@@ -21,24 +22,31 @@ export function useTextFormat({ editor }: { editor: LexicalEditor }): [TextForma
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
   const [isUnderline, setIsUnderline] = useState<boolean>(false);
   // const [isLink, setIsLink] = useState<boolean>(false); //TODO: add Link button on toolbar
+  const [isPointerDown] = usePointer();
+
+  const updateTextFormat = useCallback(() => {
+    editor.getEditorState().read(() => {
+      if (editor.isComposing() || isPointerDown) return;
+
+      const selection = $getSelection();
+
+      if ($isRangeSelection(selection)) {
+        // const nodes = selection.getNodes();
+        setIsBold(selection.hasFormat('bold'));
+        setIsItalic(selection.hasFormat('italic'));
+        setIsUnderline(selection.hasFormat('underline'));
+        setIsStrikethrough(selection.hasFormat('strikethrough'));
+      }
+    });
+  }, [editor, isPointerDown]);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        if (editor.isComposing()) return;
+    return editor.registerUpdateListener(updateTextFormat);
+  }, [editor, updateTextFormat]);
 
-        const selection = $getSelection();
-
-        if ($isRangeSelection(selection)) {
-          // const nodes = selection.getNodes();
-          setIsBold(selection.hasFormat('bold'));
-          setIsItalic(selection.hasFormat('italic'));
-          setIsUnderline(selection.hasFormat('underline'));
-          setIsStrikethrough(selection.hasFormat('strikethrough'));
-        }
-      });
-    });
-  }, [editor]);
+  useEffect(() => {
+    updateTextFormat();
+  }, [updateTextFormat]);
 
   const states: TextFormatStates = {
     isBold,
