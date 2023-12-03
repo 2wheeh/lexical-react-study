@@ -1,5 +1,6 @@
 import { FORMAT_TEXT_COMMAND, LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { usePointer } from '../../../../hooks/usePointer';
 
 interface TextFormatStates {
   isBold: boolean;
@@ -15,37 +16,37 @@ interface TextFormatHandlers {
   underline: () => void;
 }
 
-interface ContextShape {
-  states?: TextFormatStates;
-  handlers?: TextFormatHandlers;
-}
-
-const textFormatContext = createContext<ContextShape>({});
-
-export function TextFormatContext({ children, editor }: { children: ReactNode; editor: LexicalEditor }) {
+export function useTextFormat(editor: LexicalEditor) {
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
   const [isUnderline, setIsUnderline] = useState<boolean>(false);
   // const [isLink, setIsLink] = useState<boolean>(false); //TODO: add Link button on toolbar
+  const [isPointerDown] = usePointer();
+
+  const updateTextFormat = useCallback(() => {
+    editor.getEditorState().read(() => {
+      if (editor.isComposing() || isPointerDown) return;
+
+      const selection = $getSelection();
+
+      if ($isRangeSelection(selection)) {
+        // const nodes = selection.getNodes();
+        setIsBold(selection.hasFormat('bold'));
+        setIsItalic(selection.hasFormat('italic'));
+        setIsUnderline(selection.hasFormat('underline'));
+        setIsStrikethrough(selection.hasFormat('strikethrough'));
+      }
+    });
+  }, [editor, isPointerDown]);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        if (editor.isComposing()) return;
+    return editor.registerUpdateListener(updateTextFormat);
+  }, [editor, updateTextFormat]);
 
-        const selection = $getSelection();
-
-        if ($isRangeSelection(selection)) {
-          // const nodes = selection.getNodes();
-          setIsBold(selection.hasFormat('bold'));
-          setIsItalic(selection.hasFormat('italic'));
-          setIsUnderline(selection.hasFormat('underline'));
-          setIsStrikethrough(selection.hasFormat('strikethrough'));
-        }
-      });
-    });
-  }, [editor]);
+  useEffect(() => {
+    updateTextFormat();
+  }, [updateTextFormat]);
 
   const states: TextFormatStates = {
     isBold,
@@ -69,10 +70,5 @@ export function TextFormatContext({ children, editor }: { children: ReactNode; e
     },
   };
 
-  return <textFormatContext.Provider value={{ states, handlers }}>{children}</textFormatContext.Provider>;
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useTextFormat() {
-  return useContext(textFormatContext);
+  return { states, handlers };
 }
