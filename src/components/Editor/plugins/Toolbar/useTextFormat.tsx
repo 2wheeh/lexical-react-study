@@ -16,7 +16,7 @@ interface TextFormatHandlers {
   underline: () => void;
 }
 
-export function useTextFormat({ editor }: { editor: LexicalEditor }): [TextFormatStates, TextFormatHandlers] {
+export function useTextFormat(editor: LexicalEditor) {
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
@@ -70,5 +70,5 @@ export function useTextFormat({ editor }: { editor: LexicalEditor }): [TextForma
     },
   };
 
-  return [states, handlers];
+  return { states, handlers };
 }

@@ -6,7 +6,7 @@ import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import { useTargetRect } from './useTargetRect';
 
 function Toolbar({ editor }: { editor: LexicalEditor }) {
-  const [states, handlers] = useTextFormat({ editor });
+  const { states, handlers } = useTextFormat(editor);
 
   return (
     <div className='bg-slate-200 space-x-1 rounded p-1'>
