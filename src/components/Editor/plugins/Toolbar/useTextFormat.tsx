@@ -1,6 +1,14 @@
-import { FORMAT_TEXT_COMMAND, LexicalEditor, $getSelection, $isRangeSelection } from 'lexical';
+import {
+  FORMAT_TEXT_COMMAND,
+  LexicalEditor,
+  $getSelection,
+  $isRangeSelection,
+  TextFormatType as LexicalTextFormatType,
+} from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 import { usePointer } from '../../../../hooks/usePointer';
+
+export type TextFormatType = Extract<LexicalTextFormatType, 'bold' | 'italic' | 'strikethrough' | 'underline'>;
 
 interface TextFormatStates {
   isBold: boolean;
@@ -16,7 +24,7 @@ interface TextFormatHandlers {
   underline: () => void;
 }
 
-export function useTextFormat(editor: LexicalEditor) {
+export function useTextFormat(editor: LexicalEditor): Record<TextFormatType, { state: boolean; handler: () => void }> {
   const [isBold, setIsBold] = useState<boolean>(false);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
@@ -70,5 +78,11 @@ export function useTextFormat(editor: LexicalEditor) {
     },
   };
 
-  return { states, handlers };
+  // return { states, handlers };
+  return {
+    bold: { state: states.isBold, handler: handlers.bold },
+    italic: { state: states.isItalic, handler: handlers.italic },
+    strikethrough: { state: states.isStrikethrough, handler: handlers.strikethrough },
+    underline: { state: states.isUnderline, handler: handlers.underline },
+  };
 }

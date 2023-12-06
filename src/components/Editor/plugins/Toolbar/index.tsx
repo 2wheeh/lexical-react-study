@@ -1,43 +1,35 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { createPortal } from 'react-dom';
-import { useTextFormat } from './useTextFormat';
+import { TextFormatType, useTextFormat } from './useTextFormat';
 import { LexicalEditor } from 'lexical';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import { useTargetRect } from './useTargetRect';
+import { Toolbar } from '../../../Toolbar';
 
-function Toolbar({ editor }: { editor: LexicalEditor }) {
-  const { states, handlers } = useTextFormat(editor);
+const TextFormatTypesToRender: Array<TextFormatType> = ['bold', 'italic', 'strikethrough', 'underline'];
 
-  return (
-    <div className='bg-slate-200 space-x-1 rounded p-1'>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 font-bold ' + (states?.isBold ? 'bg-slate-300' : '')}
-        onClick={handlers?.bold}
-      >
-        B
-      </button>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 italic ' + (states?.isItalic ? ' bg-slate-300' : '')}
-        onClick={handlers?.italic}
-      >
-        I
-      </button>
-      <button
-        className={
-          'px-1 hover:bg-gray-300 rounded-sm w-6 line-through ' + (states?.isStrikethrough ? 'bg-slate-300' : '')
-        }
-        onClick={handlers?.strikethrough}
-      >
-        S
-      </button>
-      <button
-        className={'px-1 hover:bg-gray-300 rounded-sm w-6 underline ' + (states?.isUnderline ? 'bg-slate-300' : '')}
-        onClick={handlers?.underline}
-      >
-        U
-      </button>
-    </div>
-  );
+function TextFormatToolbar({ editor }: { editor: LexicalEditor }) {
+  const typesMap = useTextFormat(editor);
+  const textFormatClass = (type: TextFormatType) => {
+    switch (type) {
+      case 'bold':
+        return 'font-bold';
+      case 'italic':
+        return 'italic';
+      case 'strikethrough':
+        return 'line-through';
+      case 'underline':
+        return 'underline';
+    }
+  };
+
+  const cells: /* Array<CellProps> */ Parameters<typeof Toolbar>[0]['cells'] = TextFormatTypesToRender.map(type => ({
+    renderLabel: () => <span className={textFormatClass(type)}>{type[0].toUpperCase()}</span>,
+    isOn: typesMap[type].state,
+    onClick: typesMap[type].handler,
+  }));
+
+  return <Toolbar cells={cells} />;
 }
 
 const VERTICAL_GAP = 10;
@@ -102,7 +94,7 @@ export function ToolbarPlugin({ anchorElem = document.body }: { anchorElem?: HTM
 
   return (
     <FloatingContainer anchorElem={anchorElem} targetRect={targetRect}>
-      <Toolbar editor={editor} />
+      <TextFormatToolbar editor={editor} />
     </FloatingContainer>
   );
 }
