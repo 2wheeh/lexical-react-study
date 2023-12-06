@@ -8,8 +8,7 @@ export const useTargetRect = (editor: LexicalEditor) => {
 
   const updateTargetRect = useCallback(() => {
     editor.getEditorState().read(() => {
-      // if (editor.isComposing() || isPointerdown) return;
-      if (isPointerdown) return;
+      if (editor.isComposing() || isPointerdown) return;
 
       const selection = $getSelection();
       const nativeSelection = window.getSelection();
