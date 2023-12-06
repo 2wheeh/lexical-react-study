@@ -34,7 +34,8 @@ export function useTextFormat(editor: LexicalEditor): Record<TextFormatType, { s
 
   const updateTextFormat = useCallback(() => {
     editor.getEditorState().read(() => {
-      if (editor.isComposing() || isPointerDown) return;
+      // if (editor.isComposing() || isPointerDown) return;
+      if (isPointerDown) return;
 
       const selection = $getSelection();
 
