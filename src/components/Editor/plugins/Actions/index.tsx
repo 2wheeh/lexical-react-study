@@ -2,6 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND, LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
 import { useEffect, useState } from 'react';
 import { useEditorHistoryContext } from '../../context/useEditorHistoryContext';
+import { Button } from '../../../Button';
 
 function useClear(editor: LexicalEditor): [boolean, { clear: () => void }] {
   const [isEditorEmpty, setIsEditorEmpty] = useState<boolean>(true);
@@ -76,27 +77,15 @@ export function ActionsPlugin() {
   return (
     <div className='space-x-1'>
       {/* // TODO: replace <button /> with wrapped component <Button />  */}
-      <button
-        className='my-2 p-2 rounded bg-slate-200 opacity-70 disabled:opacity-30'
-        disabled={isEditorEmpty}
-        onClick={clear}
-      >
+      <Button disabled={isEditorEmpty} onClick={clear}>
         <p>clear</p>
-      </button>
-      <button
-        className='my-2 p-2 rounded bg-slate-200 opacity-70 disabled:opacity-30'
-        disabled={!hasUndo}
-        onClick={undo}
-      >
+      </Button>
+      <Button disabled={!hasUndo} onClick={undo}>
         <p>undo</p>
-      </button>
-      <button
-        className='my-2 p-2 rounded bg-slate-200 opacity-70 disabled:opacity-30'
-        disabled={!hasRedo}
-        onClick={redo}
-      >
+      </Button>
+      <Button disabled={!hasRedo} onClick={redo}>
         <p>redo</p>
-      </button>
+      </Button>
     </div>
   );
 }
