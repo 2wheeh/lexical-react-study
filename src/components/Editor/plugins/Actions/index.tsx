@@ -1,39 +1,24 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND, LexicalEditor, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
+import { useLexicalIsTextContentEmpty } from '@lexical/react/useLexicalIsTextContentEmpty';
+import { mergeRegister } from '@lexical/utils';
+import {
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  CLEAR_EDITOR_COMMAND,
+  COMMAND_PRIORITY_CRITICAL,
+  LexicalEditor,
+  REDO_COMMAND,
+  UNDO_COMMAND,
+} from 'lexical';
 import { useEffect, useState } from 'react';
-import { useEditorHistoryContext } from '../../context/useEditorHistoryContext';
 import { Button } from '../../../Button';
 
 function useClear(editor: LexicalEditor): [boolean, { clear: () => void }] {
-  const [isEditorEmpty, setIsEditorEmpty] = useState<boolean>(true);
-
-  useEffect(
-    function checkEditorEmptyState() {
-      return editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          const root = $getRoot();
-          const children = root.getChildren();
-
-          if (children.length > 1) {
-            setIsEditorEmpty(false);
-            return;
-          }
-
-          if ($isParagraphNode(children[0])) {
-            setIsEditorEmpty(children[0].getChildren().length === 0);
-          } else {
-            setIsEditorEmpty(false);
-          }
-        });
-      });
-    },
-    [editor]
-  );
+  const isEditorEmpty = useLexicalIsTextContentEmpty(editor);
 
   const handler = {
     clear: () => {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-      // editor.focus();
     },
   };
 
@@ -41,21 +26,29 @@ function useClear(editor: LexicalEditor): [boolean, { clear: () => void }] {
 }
 
 function useHistory(editor: LexicalEditor): [boolean, boolean, { undo: () => void; redo: () => void }] {
-  const { historyState } = useEditorHistoryContext();
+  const [canUndo, setCanUndo] = useState<boolean>(false);
+  const [canRedo, setCanRedo] = useState<boolean>(false);
 
-  const { undoStack, redoStack } = historyState ?? {};
-  const [hasUndo, setHasUndo] = useState<boolean>(undoStack?.length !== 0);
-  const [hasRedo, setHasRedo] = useState<boolean>(redoStack?.length !== 0);
-
-  useEffect(
-    function checkEditorHistoryActions() {
-      return editor.registerUpdateListener(() => {
-        setHasRedo(redoStack?.length !== 0);
-        setHasUndo(undoStack?.length !== 0);
-      });
-    },
-    [editor, undoStack, redoStack]
-  );
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand<boolean>(
+        CAN_UNDO_COMMAND,
+        payload => {
+          setCanUndo(payload);
+          return false; // Return true to stop propagation. (in case there are some other listeners to same COMMAND)
+        },
+        COMMAND_PRIORITY_CRITICAL
+      ),
+      editor.registerCommand<boolean>(
+        CAN_REDO_COMMAND,
+        payload => {
+          setCanRedo(payload);
+          return false;
+        },
+        COMMAND_PRIORITY_CRITICAL
+      )
+    );
+  }, [editor]);
 
   const handlers = {
     undo: () => {
@@ -66,24 +59,24 @@ function useHistory(editor: LexicalEditor): [boolean, boolean, { undo: () => voi
       editor.dispatchCommand(REDO_COMMAND, undefined);
     },
   };
-  return [hasUndo, hasRedo, handlers];
+
+  return [canUndo, canRedo, handlers];
 }
 
 export function ActionsPlugin() {
   const [editor] = useLexicalComposerContext();
   const [isEditorEmpty, { clear }] = useClear(editor);
-  const [hasUndo, hasRedo, { undo, redo }] = useHistory(editor);
+  const [canUndo, canRedo, { undo, redo }] = useHistory(editor);
 
   return (
     <div className='space-x-1'>
-      {/* // TODO: replace <button /> with wrapped component <Button />  */}
       <Button disabled={isEditorEmpty} onClick={clear}>
         <p>clear</p>
       </Button>
-      <Button disabled={!hasUndo} onClick={undo}>
+      <Button disabled={!canUndo} onClick={undo}>
         <p>undo</p>
       </Button>
-      <Button disabled={!hasRedo} onClick={redo}>
+      <Button disabled={!canRedo} onClick={redo}>
         <p>redo</p>
       </Button>
     </div>
