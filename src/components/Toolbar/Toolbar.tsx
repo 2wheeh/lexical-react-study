@@ -21,8 +21,8 @@ interface ToolbarProps {
 export function Toolbar({ cells }: ToolbarProps) {
   return (
     <div className='bg-slate-200 space-x-1 rounded p-1'>
-      {cells.map(cellProps => (
-        <Cell {...cellProps} />
+      {cells.map((cellProps, i) => (
+        <Cell key={i} {...cellProps} />
       ))}
     </div>
   );
